@@ -1,6 +1,14 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { isValidObjectId, Model } from 'mongoose';
 import { Album, AlbumDocument } from '../schemas/albums.schema';
 import { CreateAlbumDto } from './create-album.dto';
 
@@ -27,5 +35,17 @@ export class AlbumsController {
       title: albumDto.title,
       created_at: albumDto.created_at,
     });
+  }
+
+  @Delete(':id')
+  async deleteAlbum(@Param('id') id: string) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('Wrong ID');
+    }
+    const album = await this.albumModel.findByIdAndDelete(id);
+    if (!album) {
+      throw new BadRequestException('Album not found');
+    }
+    return 'SUCCESSFULLY DELETED!';
   }
 }

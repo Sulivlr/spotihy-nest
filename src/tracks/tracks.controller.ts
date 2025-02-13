@@ -1,6 +1,14 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { isValidObjectId, Model } from 'mongoose';
 import { CreateTrackDto } from './create.track.dto';
 import { Track, TrackDocument } from '../schemas/tracks.schema';
 
@@ -27,5 +35,17 @@ export class TracksController {
       title: trackDto.title,
       duration: trackDto.duration,
     });
+  }
+
+  @Delete(':id')
+  async deleteTrack(@Param('id') id: string) {
+    if (!isValidObjectId(id)) {
+      throw new BadRequestException('Wrong ID');
+    }
+    const track = await this.trackModel.findByIdAndDelete(id);
+    if (!track) {
+      throw new BadRequestException('Track not found');
+    }
+    return 'SUCCESSFULLY DELETED!';
   }
 }
