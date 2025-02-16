@@ -242,7 +242,7 @@ export class SeederService {
     );
     await this.userModel.create(
       {
-        username: 'Suli',
+        email: 'Suli@gmail.com',
         password: '13',
         token: randomUUID(),
         role: 'admin',
@@ -250,7 +250,7 @@ export class SeederService {
         displayName: 'Suli',
       },
       {
-        username: 'Sultan',
+        email: 'Sultan@gmail.com',
         password: '123',
         token: randomUUID(),
         role: 'user',
