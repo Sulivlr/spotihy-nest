@@ -6,11 +6,14 @@ import {
   Get,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from 'mongoose';
 import { CreateTrackDto } from './create.track.dto';
 import { Track, TrackDocument } from '../schemas/tracks.schema';
+import { Guard } from '../user-role/user-role.guard';
+import { TokenAuthGuard } from '../auth/token-auth.guard';
 
 @Controller('tracks')
 export class TracksController {
@@ -28,6 +31,7 @@ export class TracksController {
     return this.trackModel.findById(id);
   }
 
+  @UseGuards(TokenAuthGuard)
   @Post()
   async createTrack(@Body() trackDto: CreateTrackDto) {
     return await this.trackModel.create({
@@ -37,6 +41,7 @@ export class TracksController {
     });
   }
 
+  @UseGuards(TokenAuthGuard, new Guard(['admin']))
   @Delete(':id')
   async deleteTrack(@Param('id') id: string) {
     if (!isValidObjectId(id)) {
