@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { User, UserDocument } from '../schemas/user.schema';
 import { Model } from 'mongoose';
@@ -26,6 +34,21 @@ export class UsersController {
   @Post('sessions')
   login(@Req() req: Request) {
     return req.user;
+  }
+
+  @Delete('sessions')
+  async logout(@Req() req: Request) {
+    const token = req.get('Authorization');
+    if (!token) {
+      return false;
+    }
+    const user = await this.userModel.findOne({ token: token });
+    if (!user) {
+      return false;
+    }
+    user.generateToken();
+    await user.save();
+    return { message: `${user.email} success logout` };
   }
 
   @UseGuards(TokenAuthGuard)
