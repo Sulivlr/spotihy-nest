@@ -8,22 +8,30 @@ import { AlbumsController } from './albums/albums.controller';
 import { Album, AlbumSchema } from './schemas/albums.schema';
 import { TracksController } from './tracks/tracks.controller';
 import { Track, TrackSchema } from './schemas/tracks.schema';
+import { User, UserSchema } from './schemas/user.schema';
+import { UsersController } from './users/users.controller';
+import { AuthService } from './auth/auth.service';
+import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from './auth/local.strategy';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/Spotihy'),
+    MongooseModule.forRoot('mongodb://localhost/Spotihy2'),
     MongooseModule.forFeature([
       { name: Artist.name, schema: ArtistSchema },
       { name: Album.name, schema: AlbumSchema },
       { name: Track.name, schema: TrackSchema },
+      { name: User.name, schema: UserSchema },
     ]),
+    PassportModule,
   ],
   controllers: [
     AppController,
     ArtistsController,
     AlbumsController,
     TracksController,
+    UsersController,
   ],
-  providers: [AppService],
+  providers: [AppService, AuthService, LocalStrategy],
 })
 export class AppModule {}
